@@ -314,6 +314,11 @@
      Each token carries its own id (data-token) and its correct level
      (data-level); a drop accepts a level (data-accept). A level may hold
      several tokens, or none — so the exercise can't be solved by elimination.
+
+     A token whose data-level matches no drop is a distractor: give the exercise
+     a catch-all drop (e.g. data-accept="weak") for the learner to put it in.
+     Optional data-perfect="…" on the wrapper replaces the default "perfect!"
+     message shown when every item is placed correctly.
      ========================================================================== */
   $$("[data-match]").forEach(function (wrap) {
     var key = wrap.getAttribute("data-match") || "match";
@@ -347,7 +352,7 @@
         chip.parentNode.removeChild(chip);
         releaseToken(token);
         clearMarks();
-        C.announce(token.textContent + " returned to the phrase list");
+        C.announce(token.textContent + " returned to the list");
         token.focus();
       });
       slot.appendChild(chip);
@@ -374,7 +379,7 @@
         if (selected === t) { t.classList.remove("selected"); t.setAttribute("aria-pressed", "false"); selected = null; return; }
         tokens.forEach(function (x) { x.classList.remove("selected"); x.setAttribute("aria-pressed", "false"); });
         selected = t; t.classList.add("selected"); t.setAttribute("aria-pressed", "true");
-        C.announce(t.textContent + " selected. Choose a Bloom's level to place it.");
+        C.announce(t.textContent + " selected. Choose where to place it.");
       }
       t.addEventListener("click", toggleSelect);
       t.addEventListener("keydown", function (e) {
@@ -398,7 +403,7 @@
           selected = null;
           placeToken(tok, d);
         } else if (e.target.closest && e.target.closest(".drop__target")) {
-          C.announce("Select a phrase first, then choose a level.");
+          C.announce("Select an item first, then choose where it goes.");
         }
       });
     });
@@ -408,7 +413,7 @@
     $("[data-check]", wrap).addEventListener("click", function () {
       var placed = tokens.filter(function (t) { return t.classList.contains("placed"); }).length;
       if (placed < tokens.length) {
-        scoreEl.textContent = "Place all " + tokens.length + " phrases first (" + placed + "/" + tokens.length + ")";
+        scoreEl.textContent = "Place all " + tokens.length + " items first (" + placed + "/" + tokens.length + ")";
         return;
       }
       var right = 0;
@@ -426,7 +431,7 @@
       });
       var perfect = right === tokens.length;
       scoreEl.textContent = right + " / " + tokens.length + " correct" +
-        (perfect ? " — perfect!" : ". The ones marked in red are on the wrong level; select a phrase to move it.");
+        (perfect ? " — " + (wrap.getAttribute("data-perfect") || "perfect!") : ". The ones marked in red are in the wrong place; select an item to move it.");
       C.announce(right + " of " + tokens.length + " placed correctly.");
       emit("interaction.complete", { id: key + "-match", score: right, total: tokens.length });
       if (perfect && window.Confetti) window.Confetti.burst(wrap);
