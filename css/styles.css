@@ -1234,3 +1234,6 @@ button { font-family: inherit; }
   .compare__head span { padding-bottom: 6px; }
   .compare__head span + span { padding-top: 6px; border-top-color: rgba(255,255,255,.18); }
 }
+
+/* ---- Credits line at the very end of the course ---- */
+.lesson p.credits { max-width: none; margin: 22px 0 0; font-size: 13px; line-height: 1.55; color: var(--ink-muted); text-align: center; }
